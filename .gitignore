@@ -1,0 +1,6 @@
+.arena/
+.smoke/
+.agents/
+.env
+__pycache__/
+*.pyc
