@@ -393,10 +393,15 @@ class Guards(TempDir):
 
     def test_no_em_dashes_anywhere(self):
         for root, dirs, files in os.walk(REPO):
-            # .arena/.smoke hold tournament output written by the workers, not repo sources.
-            dirs[:] = [x for x in dirs if x not in (".git", "__pycache__", ".arena", ".smoke")]
+            # .arena/.smoke hold tournament output written by the workers; media dirs hold
+            # binaries (mp4/html marketing). The guard protects source files, not media.
+            dirs[:] = [x for x in dirs if x not in (".git", "__pycache__", ".arena", ".smoke", ".midia", "midia")]
             for name in files:
                 path = os.path.join(root, name)
+                with open(path, "rb") as fh:
+                    head = fh.read(1024)
+                if b"\x00" in head:
+                    continue  # binary file (video, image, font): not source text
                 with open(path, encoding="utf-8", errors="ignore") as fh:
                     text = fh.read()
                 self.assertNotIn(EM_DASH, text, "em dash in %s" % os.path.relpath(path, REPO))
