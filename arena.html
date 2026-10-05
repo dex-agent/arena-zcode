@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Arena ZCode — Apresentação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#07070d;
+  --purple:#6c5ce7;
+  --purple-dim:rgba(108,92,231,.15);
+  --teal:#00cec9;
+  --coral:#ff7675;
+  --gold:#ffd700;
+  --green:#00b894;
+  --text:#e8e8f0;
+  --dim:#7a7a9e;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
+
+canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+
+/* ── vignette + grid overlay ── */
+#vignette{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.55) 100%)}
+#grid{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.035;
+  background-image:
+    linear-gradient(rgba(108,92,231,.6) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(108,92,231,.6) 1px,transparent 1px);
+  background-size:60px 60px}
+
+/* ── scenes ── */
+.scene{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:60px 80px;opacity:0;
+  transition:opacity .6s ease;pointer-events:none}
+.scene.active{opacity:1;pointer-events:auto}
+
+/* ── staggered entrance ── */
+.scene .anim{opacity:0;transform:translateY(32px)}
+.scene.active .anim{animation:fadeUp .7s ease forwards}
+.scene.active .d1{animation-delay:.15s}
+.scene.active .d2{animation-delay:.40s}
+.scene.active .d3{animation-delay:.65s}
+.scene.active .d4{animation-delay:.90s}
+.scene.active .d5{animation-delay:1.15s}
+.scene.active .d6{animation-delay:1.40s}
+.scene.active .d7{animation-delay:1.65s}
+.scene.active .d8{animation-delay:1.90s}
+.scene.active .d9{animation-delay:2.20s}
+.scene.active .d10{animation-delay:2.50s}
+.scene.active .d11{animation-delay:2.80s}
+.scene.active .d12{animation-delay:3.10s}
+
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* ── shared elements ── */
+.scene-label{font-family:var(--mono);font-size:13px;letter-spacing:3px;
+  color:var(--dim);text-transform:uppercase;margin-bottom:28px}
+
+.tag{display:inline-block;padding:8px 18px;border-radius:100px;
+  border:1.5px solid var(--purple);color:var(--purple);font-size:14px;
+  font-weight:600;margin:0 6px;background:var(--purple-dim)}
+
+/* ── SCENE 0 : TITLE ── */
+#s0{align-items:center;text-align:center}
+#s0 .tag{margin-bottom:32px;font-size:12px;letter-spacing:2px;border-color:var(--teal);color:var(--teal);background:rgba(0,206,201,.08)}
+#s0 h1{font-size:clamp(52px,7vw,96px);font-weight:900;letter-spacing:-2px;line-height:1}
+#s0 h1 .accent{color:var(--purple)}
+#s0 .sub{font-size:clamp(18px,2.2vw,28px);color:var(--dim);margin-top:20px;font-weight:300}
+#s0 .url{font-family:var(--mono);font-size:18px;color:var(--teal);margin-top:40px;
+  padding:14px 32px;border:1.5px solid rgba(0,206,201,.3);border-radius:10px;
+  background:rgba(0,206,201,.05)}
+
+/* ── SCENE 1 : PROBLEM ── */
+#s1{text-align:center}
+.chat-\boxed{max-width:620px;width:100%;margin-bottom:36px}
+.chat-row{margin-bottom:14px;text-align:left}
+.chat-label{font-size:11px;letter-spacing:2px;color:var(--dim);margin-bottom:6px;font-weight:600}
+.chat-bubble{padding:16px 22px;border-radius:14px;font-size:17px;line-height:1.55}
+.chat-bubble.user{background:rgba(108,92,231,.12);border:1px solid rgba(108,92,231,.25);margin-left:40px}
+.chat-bubble.ai{background:rgba(255,118,117,.08);border:1px solid rgba(255,118,117,.2);margin-right:40px;color:var(--dim);font-style:italic}
+.chat-verdict{font-family:var(--mono);font-size:13px;color:var(--coral);margin-top:8px;text-align:center;letter-spacing:2px}
+.ok-big{font-size:clamp(60px,8vw,110px);font-weight:900;color:var(--coral);opacity:0;position:relative;display:inline-block}
+.scene.active .ok-big{animation:okReveal 1s ease forwards 2s}
+.ok-big::after{content:'';position:absolute;left:-5%;top:50%;width:110%;height:4px;
+  background:var(--coral);transform:scaleX(0) rotate(-2deg);transform-origin:left;opacity:0}
+.scene.active .ok-big::after{animation:strikeLine .6s ease forwards 3s}
+@keyframes okReveal{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
+@keyframes strikeLine{to{opacity:1;transform:scaleX(1) rotate(-2deg)}}
+.reveal-line{font-size:clamp(22px,3vw,36px);font-weight:700;margin-top:20px;color:var(--teal)}
+.reveal-line em{color:var(--gold);font-style:normal}
+
+/* ── SCENE 2 : IDEA ── */
+#s2{text-align:center}
+#s2 h2{font-size:clamp(36px,5vw,68px);font-weight:900;line-height:1.12;max-width:900px}
+#s2 h2 em{color:var(--gold);font-style:normal}
+#s2 .tags{margin-top:36px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+
+/* ── SCENE 3 : ARCHITECTURE ── */
+#s3{text-align:center}
+.arch-svg{width:100%;max-width:820px;height:auto;margin:0 auto}
+.arch-brief{fill:rgba(108,92,231,.15);stroke:var(--purple);stroke-width:2;rx:10}
+.arch-comp{fill:rgba(108,92,231,.12);stroke:var(--purple);stroke-width:2}
+.arch-judge{fill:rgba(0,206,201,.12);stroke:var(--teal);stroke-width:2}
+.arch-flash{fill:rgba(255,215,0,.08);stroke:var(--gold);stroke-width:1.5;stroke-dasharray:5,3}
+.arch-externo{fill:rgba(0,206,201,.08);stroke:var(--teal);stroke-width:1.5;stroke-dasharray:5,3}
+.arch-output{fill:rgba(0,184,148,.12);stroke:var(--green);stroke-width:2}
+.arch-arrow{stroke:var(--dim);stroke-width:2;fill:none;stroke-dasharray:300;stroke-dashoffset:300}
+.scene.active .arch-arrow{animation:drawArrow .8s ease forwards}
+.scene.active .arch-arrow:nth-of-type(1){animation-delay:.8s}
+.scene.active .arch-arrow:nth-of-type(2){animation-delay:1.1s}
+.scene.active .arch-arrow:nth-of-type(3){animation-delay:1.4s}
+.scene.active .arch-arrow:nth-of-type(4){animation-delay:1.7s}
+.scene.active .arch-arrow:nth-of-type(5){animation-delay:2.0s}
+@keyframes drawArrow{to{stroke-dashoffset:0}}
+.arch-note{font-family:var(--mono);font-size:14px;color:var(--teal);margin-top:16px}
+
+/* ── SCENE 4 : BRACKET ── */
+#s4{text-align:center;width:100%;max-width:900px}
+.bracket-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;max-width:720px;margin:0 auto 32px}
+.bx{padding:10px 4px;text-align:center;border:1.5px solid var(--purple);
+  border-radius:8px;font-family:var(--mono);font-size:13px;color:var(--dim);
+  background:rgba(108,92,231,.06);opacity:0;transition:opacity .5s,border-color .5s,box-shadow .5s,transform .3s}
+.bx.appear{opacity:1;animation:bxPop .35s ease}
+.bx.eliminated{opacity:.12;border-color:var(--coral);transform:scale(.88)}
+.bx.survivor{border-color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.35);color:var(--text)}
+.bx.champion{border-color:var(--gold);box-shadow:0 0 28px rgba(255,215,0,.7);
+  font-weight:700;font-size:15px;color:var(--gold);animation:champPulse .8s ease infinite alternate}
+@keyframes bxPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes champPulse{from{box-shadow:0 0 18px rgba(255,215,0,.5)}to{box-shadow:0 0 36px rgba(255,215,0,1)}}
+
+.mech-row{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin-bottom:16px}
+.mech-item{text-align:center}
+.mech-tag{display:inline-block;font-family:var(--mono);font-size:12px;
+  letter-spacing:2px;color:var(--purple);padding:4px 14px;border:1px solid var(--purple);
+  border-radius:6px;margin-bottom:6px}
+.mech-item:nth-child(2) .mech-tag{color:var(--teal);border-color:var(--teal)}
+.mech-item:nth-child(3) .mech-tag{color:var(--gold);border-color:var(--gold)}
+.mech-item p{font-size:15px;color:var(--dim)}
+.notajud{font-family:var(--mono);font-size:clamp(18px,2.5vw,26px);font-weight:700;
+  color:var(--teal);letter-spacing:2px;margin-top:12px}
+
+/* ── SCENE 5 : HONESTY ── */
+#s5{text-align:center}
+.panels{display:flex;gap:32px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
+.panel{width:260px;padding:28px 24px;border-radius:16px;border:2px solid}
+.panel.rejected{border-color:rgba(255,118,117,.4);background:rgba(255,118,117,.05)}
+.panel.winner{border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.04)}
+.panel-h{font-size:12px;letter-spacing:2px;font-weight:700;margin-bottom:16px}
+.panel.rejected .panel-h{color:var(--coral)}
+.panel.winner .panel-h{color:var(--gold)}
+.panel-score{font-family:var(--mono);font-size:64px;font-weight:700;line-height:1}
+.panel.rejected .panel-score{color:var(--coral)}
+.panel.winner .panel-score{color:var(--gold)}
+.panel-status{font-size:13px;letter-spacing:2px;color:var(--dim);margin-top:12px;font-weight:600}
+.s5-msg{font-size:clamp(18px,2.4vw,26px);font-weight:600;max-width:700px;line-height:1.45}
+.s5-msg span{color:var(--teal)}
+
+/* ── SCENE 6 : COST ── */
+#s6{text-align:center;width:100%;max-width:700px}
+.cost-table{width:100%;margin-bottom:28px}
+.cost-row{display:flex;justify-content:space-between;align-items:center;
+  padding:18px 24px;border-bottom:1px solid rgba(122,122,158,.15);opacity:0;
+  transition:opacity .5s}
+.cost-row.revealed{opacity:1}
+.cost-label{font-size:18px;color:var(--dim);font-weight:400}
+.cost-value{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--text)}
+.cost-value b{color:var(--gold);font-size:32px}
+.s6-note{font-size:17px;color:var(--dim)}
+
+/* ── SCENE 7 : CTA ── */
+#s7{text-align:center}
+.s7-url{font-family:var(--mono);font-size:clamp(26px,3.6vw,48px);font-weight:700;
+  color:var(--teal);line-height:1.3;margin-bottom:32px}
+.s7-url a{color:inherit;text-decoration:none}
+.s7-tags{margin-bottom:40px}
+.s7-final{font-size:clamp(22px,3vw,36px);font-weight:800;color:var(--text);line-height:1.35}
+.s7-final em{color:var(--gold);font-style:normal}
+.s7-license{margin-top:24px;font-family:var(--mono);font-size:14px;color:var(--dim);letter-spacing:2px}
+
+/* ── UI OVERLAY ── */
+#ui{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:0 40px 24px;
+  display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+#progress{flex:1;height:3px;background:rgba(122,122,158,.2);border-radius:4px;overflow:hidden;margin-right:24px}
+#progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--teal));border-radius:4px;transition:width .1s linear}
+#counter{font-family:var(--mono);font-size:13px;color:var(--dim);letter-spacing:2px;white-space:nowrap}
+
+/* ── scanline (optional, remove if distracting) ── */
+#scan{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.03;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.08) 2px,transparent 4px)}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div id="vignette"></div>
+<div id="grid"></div>
+<div id="scan"></div>
+
+<!-- ══════════ SCENE 0 : TITLE ══════════ -->
+<div class="scene" id="s0">
+  <div class="tag anim d1">open-source · MIT · grátis · sem chave de API</div>
+  <h1 class="anim d3">ARENA<span class="accent">-</span>ZCODE</h1>
+  <p class="sub anim d5">16 agentes brigando até a morte pela sua resposta</p>
+  <div class="url anim d7">github.com/dex-agent/arena-zcode</div>
+</div>
+
+<!-- ══════════ SCENE 1 : PROBLEM ══════════ -->
+<div class="scene" id="s1">
+  <div class="scene-label anim d1">01 — O problema</div>
+  <div class="chat-box anim d2">
+    <div class="chat-row">
+      <div class="chat-label">VOCÊ</div>
+      <div class="chat-bubble user">Escreva um email de vendas para um cliente enterprise...</div>
+    </div>
+    <div class="chat-row">
+      <div class="chat-label">IA</div>
+      <div class="chat-bubble ai">Prezado cliente, gostaria de apresentar nossa solução para... Nossa equipe está dedicada a... Permite-me destacar...</div>
+    </div>
+    <div class="chat-verdict anim d4">RESPOSTA GENÉRICA ✕</div>
+  </div>
+  <div class="anim d5"><span class="ok-big">ok.</span></div>
+  <div class="reveal-line anim d9">Agora: <em>16 versões DISPUTAM</em></div>
+</div>
+
+<!-- ══════════ SCENE 2 : IDEA ══════════ -->
+<div class="scene" id="s2">
+  <div class="scene-label anim d1">02 — A ideia</div>
+  <h2 class="anim d3">16 versões do modelo<br><em>brigando até a morte</em></h2>
+  <div class="tags anim d6">
+    <span class="tag">ZCode</span>
+    <span class="tag">MIT</span>
+    <span class="tag">Grátis</span>
+    <span class="tag">Sem chave de API</span>
+    <span class="tag">Sem conexão externa</span>
+  </div>
+</div>
+
+<!-- ══════════ SCENE 3 : ARCHITECTURE ══════════ -->
+<div class="scene" id="s3">
+  <div class="scene-label anim d1">03 — A arquitetura</div>
+  <svg class="arch-svg anim d2" viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg">
+    <!-- Brief -->
+    <rect x="310" y="16" width="200" height="50" rx="12" class="arch-brief"/>
+    <text x="410" y="47" text-anchor="middle" fill="#e8e8f0" font-family="JetBrains Mono,monospace" font-size="16" font-weight="700">BRIEF</text>
+
+    <!-- Arrows from Brief -->
+    <path d="M360,66 L170,130" class="arch-arrow"/>
+    <path d="M460,66 L650,130" class="arch-arrow"/>
+
+    <!-- Competitors column -->
+    <rect x="50" y="140" width="220" height="44" rx="8" class="arch-comp"/>
+    <text x="160" y="167" text-anchor="middle" fill="#6c5ce7" font-family="Inter,sans-serif" font-size="14" font-weight="700" letter-spacing="1">COMPETIDORES</text>
+
+    <!-- Flash boxes -->
+    <rect x="58" y="200" width="95" height="34" rx="6" class="arch-flash"/>
+    <text x="105" y="222" text-anchor="middle" fill="#ffd700" font-family="JetBrains Mono,monospace" font-size="13">flash</text>
+    <rect x="165" y="200" width="95" height="34" rx="6" class="arch-flash"/>
+    <text x="212" y="222" text-anchor="middle" fill="#ffd700" font-family="JetBrains Mono,monospace" font-size="13">flash</text>
+    <rect x="58" y="248" width="95" height="34" rx="6" class="arch-flash"/>
+    <text x="105" y="270" text-anchor="middle" fill="#ffd700" font-family="JetBrains Mono,monospace" font-size="13">flash</text>
+    <rect x="165" y="248" width="95" height="34" rx="6" class="arch-flash"/>
+    <text x="212" y="270" text-anchor="middle" fill="#ffd700" font-family="JetBrains Mono,monospace" font-size="13">flash</text>
+
+    <!-- Judges column -->
+    <rect x="530" y="140" width="220" height="44" rx="8" class="arch-judge"/>
+    <text x="640" y="167" text-anchor="middle" fill="#00cec9" font-family="Inter,sans-serif" font-size="14" font-weight="700" letter-spacing="1">JUÍZES</text>
+
+    <!-- Externo boxes -->
+    <rect x="545" y="200" width="120" height="34" rx="6" class="arch-externo"/>
+    <text x="605" y="222" text-anchor="middle" fill="#00cec9" font-family="JetBrains Mono,monospace" font-size="13">externo</text>
+    <rect x="575" y="248" width="120" height="34" rx="6" class="arch-externo"/>
+    <text x="635" y="270" text-anchor="middle" fill="#00cec9" font-family="JetBrains Mono,monospace" font-size="13">externo</text>
+
+    <!-- Converging arrows to output -->
+    <path d="M160,290 L370,360" class="arch-arrow"/>
+    <path d="M212,290 L430,360" class="arch-arrow"/>
+    <path d="M605,290 L440,360" class="arch-arrow"/>
+    <path d="M635,290 L390,360" class="arch-arrow"/>
+
+    <!-- Output box -->
+    <rect x="310" y="362" width="200" height="50" rx="12" class="arch-output"/>
+    <text x="410" y="393" text-anchor="middle" fill="#00b894" font-family="JetBrains Mono,monospace" font-size="16" font-weight="700">RANKING</text>
+  </svg>
+  <p class="arch-note anim d6">nenhum juiz da família flash — réguas iguais, sem autopreferência</p>
+</div>
+
+<!-- ══════════ SCENE 4 : BRACKET ══════════ -->
+<div class="scene" id="s4">
+  <div class="scene-label anim d1">04 — O torneio</div>
+  <div class="bracket-grid anim d2" id="bracket"></div>
+  <div class="mech-row anim d8">
+    <div class="mech-item">
+      <div class="mech-tag">ataque</div>
+      <p>o que está errado · requisito faltou</p>
+    </div>
+    <div class="mech-item">
+      <div class="mech-tag">defesa</div>
+      <p>rebate com evidência · reescreve</p>
+    </div>
+    <div class="mech-item">
+      <div class="mech-tag">julgamento</div>
+      <p>5 métricas · nota vence opinião</p>
+    </div>
+  </div>
+  <div class="notajud anim d10">NOTA &gt; OPINIÃO DO JUIZ</div>
+</div>
+
+<!-- ══════════ SCENE 5 : HONESTY ══════════ -->
+<div class="scene" id="s5">
+  <div class="scene-label anim d1">05 — Transparência</div>
+  <div class="panels anim d3">
+    <div class="panel rejected">
+      <div class="panel-h">SUA RESPOSTA</div>
+      <div class="panel-score" id="score-rejected">0.0</div>
+      <div class="panel-status">rejeitada</div>
+    </div>
+    <div class="panel winner">
+      <div class="panel-h">RESPOSTA VENCEDORA</div>
+      <div class="panel-score" id="score-winner">0.0</div>
+      <div class="panel-status">aprovada</div>
+    </div>
+  </div>
+  <p class="s5-msg anim d6">Ele te mostra a resposta que você rejeitou<br>e o placar dela. <span>Transparente até o fim.</span></p>
+</div>
+
+<!-- ══════════ SCENE 6 : COST ══════════ -->
+<div class="scene" id="s6">
+  <div class="scene-label anim d1">06 — Custo</div>
+  <div class="cost-table anim d2" id="cost-table">
+    <div class="cost-row" data-target="91">
+      <span class="cost-label">16 agentes</span>
+      <span class="cost-value">chamadas: <b class="counter">0</b></span>
+    </div>
+    <div class="cost-row" data-target="43">
+      <span class="cost-label">--quick</span>
+      <span class="cost-value">chamadas: <b class="counter">0</b></span>
+    </div>
+    <div class="cost-row" data-target="595">
+      <span class="cost-label">--full · 100 agentes</span>
+      <span class="cost-value">chamadas: <b class="counter">0</b></span>
+    </div>
+    <div class="cost-row" data-target="5">
+      <span class="cost-label">Juízes por partida</span>
+      <span class="cost-value">~$<b class="counter">0</b></span>
+    </div>
+  </div>
+  <p class="s6-note anim d7">Juízes custam centavos por partida. Barato. Muito barato.</p>
+</div>
+
+<!-- ══════════ SCENE 7 : CTA ══════════ -->
+<div class="scene" id="s7">
+  <div class="s7-url anim d2">github.com/<br>dex-agent/arena-zcode</div>
+  <div class="s7-tags anim d5">
+    <span class="tag">MIT License</span>
+    <span class="tag">Contribua</span>
+    <span class="tag">Aberto</span>
+  </div>
+  <p class="s7-final anim d8">Pega, muda, publica.<br><em>faça 16 versões dele brigarem até a morte</em></p>
+  <div class="s7-license anim d10">open-source · ZCode · arena-zcode</div>
+</div>
+
+<!-- UI -->
+<div id="ui">
+  <div id="progress"><div id="progress-fill"></div></div>
+  <div id="counter">01 / 08</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   THREE.JS — PARTICLE BACKGROUND + CONVERGENCE
+   ═══════════════════════════════════════════ */
+let scene3d, camera3d, renderer3d, particleSys;
+let agents = [], mergedSphere;
+const AGENT_COUNT = 16;
+let hasThree = false;
+
+function easeInOutCubic(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+
+function initThree(){
+  try{
+    const canvas=document.getElementById('bg');
+    scene3d=new THREE.Scene();
+    camera3d=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,200);
+    camera3d.position.z=18;
+    renderer3d=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+    renderer3d.setSize(innerWidth,innerHeight);
+    renderer3d.setPixelRatio(Math.min(devicePixelRatio,2));
+
+    // particles
+    const N=2200,pos=new Float32Array(N*3),col=new Float32Array(N*3);
+    for(let i=0;i<N;i++){
+      const t=Math.random(),p=Math.acos(2*Math.random()-1),th=Math.random()*Math.PI*2,r=6+Math.random()*22;
+      pos[i*3]=r*Math.sin(p)*Math.cos(th);pos[i*3+1]=r*Math.sin(p)*Math.sin(th);pos[i*3+2]=r*Math.cos(p);
+      col[i*3]=.42;col[i*3+1]=.36+t*.47;col[i*3+2]=.91-t*.2;
+    }
+    const pg=new THREE.BufferGeometry();
+    pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    pg.setAttribute('color',new THREE.BufferAttribute(col,3));
+    particleSys=new THREE.Points(pg,new THREE.PointsMaterial({size:.11,vertexColors:true,transparent:true,opacity:.65,sizeAttenuation:true}));
+    scene3d.add(particleSys);
+
+    // agent spheres
+    const colors=[0x6c5ce7,0x00cec9,0xff7675,0xfdcb6e];
+    for(let i=0;i<AGENT_COUNT;i++){
+      const g=new THREE.SphereGeometry(.22,16,16);
+      const m=new THREE.MeshBasicMaterial({color:colors[i%4],transparent:true,opacity:0});
+      const mesh=new THREE.Mesh(g,m);
+      mesh.userData.angle=(i/AGENT_COUNT)*Math.PI*2;
+      agents.push(mesh);scene3d.add(mesh);
+    }
+
+    // merged sphere
+    const mg=new THREE.SphereGeometry(.55,32,32);
+    const mm=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0});
+    mergedSphere=new THREE.Mesh(mg,mm);mergedSphere.visible=false;
+    scene3d.add(mergedSphere);
+
+    hasThree=true;
+    addEventListener('resize',()=>{camera3d.aspect=innerWidth/innerHeight;camera3d.updateProjectionMatrix();renderer3d.setSize(innerWidth,innerHeight)});
+  }catch(e){console.warn('Three.js error:',e);hasThree=false}
+}
+
+function updateThree(time,sceneIdx,sceneT){
+  if(!hasThree)return;
+  // particle rotation
+  particleSys.rotation.y=time*.018;
+  particleSys.rotation.x=Math.sin(time*.008)*.12;
+  particleSys.material.opacity=.5+Math.sin(time*.3)*.1;
+
+  // camera drift
+  camera3d.position.x=Math.sin(time*.04)*.6;
+  camera3d.position.y=Math.cos(time*.025)*.35;
+  camera3d.lookAt(0,0,0);
+
+  // scene 2 convergence
+  if(sceneIdx===2){
+    const startT=2.5, dur=6.0;
+    const t=Math.max(0,Math.min(1,(sceneT-startT)/dur));
+    const e=easeInOutCubic(t);
+    agents.forEach((a,i)=>{
+      a.visible=true;
+      const ang=a.userData.angle+e*Math.PI*2.5;
+      const rad=7*(1-e);
+      const y=Math.sin(a.userData.angle*3+e*2)*1.2*(1-e);
+      a.position.set(Math.cos(ang)*rad,y,Math.sin(ang)*rad);
+      const sc=Math.max(.02,1-e*.75);
+      a.scale.setScalar(sc);
+      a.material.opacity=Math.min(.85,.2+e*.65);
+    });
+    if(t>=1){
+      mergedSphere.visible=true;
+      const pulse=1+Math.sin(sceneT*4)*.12;
+      mergedSphere.scale.setScalar(.55*pulse);
+      mergedSphere.material.opacity=Math.min(1,(t-1)*3+.25);
+    }
+  }else{
+    agents.forEach(a=>{a.visible=false});
+    mergedSphere.visible=false;
+    mergedSphere.material.opacity=0;
+  }
+
+  renderer3d.render(scene3d,camera3d);
+}
+
+/* ═══════════════════════════════════════════
+   SCENE MANAGER
+   ═══════════════════════════════════════════ */
+const SCENES=[
+  {id:'s0',dur:5000},{id:'s1',dur:10000},{id:'s2',dur:13000},
+  {id:'s3',dur:10000},{id:'s4',dur:16000},{id:'s5',dur:10000},
+  {id:'s6',dur:9000},{id:'s7',dur:9000}
+];
+let cur=0, sceneStart=0, bracketDone=false, counterDone=false;
+
+function activateScene(idx){
+  if(idx>=SCENES.length){idx=0}
+  // remove active from old
+  const old=document.getElementById(SCENES[cur].id);
+  if(old)old.classList.remove('active');
+  cur=idx;sceneStart=performance.now();
+  const el=document.getElementById(SCENES[idx].id);
+  el.classList.add('active');
+  document.getElementById('counter').textContent=
+    String(idx+1).padStart(2,'0')+' / '+String(SCENES.length).padStart(2,'0');
+  // scene-specific triggers
+  if(idx===4&&!bracketDone){bracketDone=false;resetBracket();setTimeout(()=>{runBracket()},2400)}
+  if(idx===5&&!counterDone){counterDone=true;setTimeout(()=>runCounters(),1600)}
+  if(idx===6){setTimeout(()=>runCostTable(),1200)}
+  if(idx===0){bracketDone=false;counterDone=false}
+}
+
+function updateProgress(now){
+  const elapsed=now-sceneStart;
+  const dur=SCENES[cur].dur;
+  const p=Math.min(1,elapsed/dur);
+  const total=(cur+p)/SCENES.length;
+  document.getElementById('progress-fill').style.width=(total*100)+'%';
+  return elapsed/1000; // seconds in scene
+}
+
+/* ── BRACKET ANIMATION ── */
+function buildBracket(){
+  const grid=document.getElementById('bracket');
+  grid.innerHTML='';
+  const labels=['A1','A2','B1','B2','C1','C2','D1','D2','E1','E2','F1','F2','G1','G2','H1','H2'];
+  labels.forEach(l=>{
+    const d=document.createElement('div');
+    d.className='bx';d.textContent=l;d.dataset.id=l;
+    grid.appendChild(d);
+  });
+}
+function resetBracket(){buildBracket();bracketDone=false}
+function runBracket(){
+  const boxes=Array.from(document.querySelectorAll('.bx'));
+  if(!boxes.length)return;
+  // appear all
+  boxes.forEach((b,i)=>setTimeout(()=>b.classList.add('appear'),i*80));
+  // pairs
+  const pairs=[];
+  for(let i=0;i<16;i+=2)pairs.push([boxes[i],boxes[i+1]]);
+  let rd=0;
+  function playRound(pArr,round){
+    if(!pArr.length){bracketDone=true;return}
+    pArr.forEach(([a,b],i)=>{
+      setTimeout(()=>{
+        const aWins=Math.random()>.5;
+        const w=aWins?a:b,l=aWins?b:a;
+        l.classList.add('eliminated');
+        w.classList.add('survivor');
+      },round*2200+i*320);
+    });
+    setTimeout(()=>{
+      const surv=boxes.filter(x=>x.classList.contains('survivor')&&!x.classList.contains('eliminated'));
+      if(surv.length===1){surv[0].classList.add('champion');bracketDone=true}
+      else{
+        const np=[];
+        for(let i=0;i<surv.length;i+=2){if(surv[i+1])np.push([surv[i],surv[i+1]])}
+        surv.forEach(s=>s.classList.remove('survivor'));
+        playRound(np,round+1);
+      }
+    },pArr.length*320+600);
+  }
+  setTimeout(()=>playRound(pairs,0),100);
+}
+
+/* ── COUNTER ANIMATION (scene 5) ── */
+function runCounters(){
+  animateScore('score-rejected',7.2);
+  animateScore('score-winner',8.9);
+}
+function animateScore(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  const dur=1800,start=performance.now();
+  function upd(now){
+    const t=Math.min(1,(now-start)/dur);
+    const e=1-Math.pow(1-t,3);
+    el.textContent=(target*e).toFixed(1);
+    if(t<1)requestAnimationFrame(upd);
+  }
+  requestAnimationFrame(upd);
+}
+
+/* ── COST TABLE (scene 6) ── */
+function runCostTable(){
+  const rows=document.querySelectorAll('#cost-table .cost-row');
+  rows.forEach((row,i)=>{
+    setTimeout(()=>{
+      row.classList.add('revealed');
+      const target=parseFloat(row.dataset.target);
+      const b=row.querySelector('.counter');
+      const dur=1400,start=performance.now();
+      function upd(now){
+        const t=Math.min(1,(now-start)/dur);
+        const e=1-Math.pow(1-t,3);
+        if(target<10&&target%1!==0){
+          b.textContent=(target*e).toFixed(1);
+        }else{
+          b.textContent=Math.round(target*e);
+        }
+        if(t<1)requestAnimationFrame(upd);
+      }
+      requestAnimationFrame(upd);
+    },i*500);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   MAIN LOOP
+   ═══════════════════════════════════════════ */
+function mainLoop(now){
+  if(!sceneStart)sceneStart=now;
+  const sceneSec=updateProgress(now);
+  const sceneT=now/1000;
+
+  // auto-advance
+  const elapsed=now-sceneStart;
+  if(elapsed>=SCENES[cur].dur){
+    activateScene(cur+1);
+  }
+
+  // three.js
+  updateThree(sceneT,cur,sceneSec);
+
+  requestAnimationFrame(mainLoop);
+}
+
+/* ═══════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════ */
+function boot(){
+  initThree();
+  buildBracket();
+  // initial scene
+  document.getElementById(SCENES[0].id).classList.add('active');
+  document.getElementById('counter').textContent='01 / '+String(SCENES.length).padStart(2,'0');
+  sceneStart=performance.now();
+  requestAnimationFrame(mainLoop);
+}
+boot();
+</script>
+</body>
+</html>
