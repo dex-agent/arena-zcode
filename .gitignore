@@ -2,5 +2,6 @@
 .smoke/
 .agents/
 .env
+.midia/
 __pycache__/
 *.pyc
