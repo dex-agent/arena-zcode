@@ -161,6 +161,7 @@ python skills/arena-zcode/bracket.py winner             # o sobrevivente e como 
 
 `skills/arena-zcode/scripts/jev-juiz.mjs` é o juiz externo: uma chamada Node por partida,
 centavos cada, sem provedor do host no caminho.
+O que é esse juiz, **de onde vem a `TYPESAFE_API_KEY`** (console.typesafe.ai/keys), quanto custa e como funciona o protocolo de perguntas inteiro está em [docs/JUDGE.md](docs/JUDGE.md) - escrito pra quem não tem nenhum do contexto original.
 `node skills/arena-zcode/scripts/jev-juiz.mjs --help` é a referência viva. Os comandos que tu
 vais usar de verdade:
 

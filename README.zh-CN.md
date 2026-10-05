@@ -150,7 +150,8 @@ python skills/arena-zcode/bracket.py winner             # 幸存者及其一路�
 ## 裁判运行器
 
 `skills/arena-zcode/scripts/jev-juiz.mjs` 是外部裁判:每场比赛一次 Node 调用,每次几分
-钱,不经过宿主提供商。`node skills/arena-zcode/scripts/jev-juiz.mjs --help` 是活文档。你真
+钱,不经过宿主提供商。这个裁判是什么、**`TYPESAFE_API_KEY` 从哪来**(console.typesafe.ai/keys)、要花多少钱、整套提问协议如何运转,都写在 [docs/JUDGE.md](docs/JUDGE.md) 里:为没有任何原始背景的人而写。
+`node skills/arena-zcode/scripts/jev-juiz.mjs --help` 是活文档。你真
 正常用的命令:
 
 ```bash

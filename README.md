@@ -171,8 +171,11 @@ python skills/arena-zcode/bracket.py winner             # the survivor and how i
 ## The judge runner
 
 `skills/arena-zcode/scripts/jev-juiz.mjs` is the external judge: one Node call per match, cents
-each, no host provider involved. `node skills/arena-zcode/scripts/jev-juiz.mjs --help` is the
-living reference. The commands you will actually use:
+each, no host provider involved. What that judge is, **where the `TYPESAFE_API_KEY` comes from**
+(console.typesafe.ai/keys), what it costs and how the whole question protocol works is documented
+in [docs/JUDGE.md](docs/JUDGE.md) - written for someone with none of the original context.
+`node skills/arena-zcode/scripts/jev-juiz.mjs --help` is the living reference. The commands you
+will actually use:
 
 ```bash
 node skills/arena-zcode/scripts/jev-juiz.mjs --check-key      # live one-question ping, before any spend
